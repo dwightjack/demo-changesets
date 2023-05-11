@@ -1,5 +1,6 @@
 {
   "name": "demo-changesets",
+  "packageManager": "pnpm@7.29.3",
   "version": "1.0.0",
   "description": "",
   "private": "true",
