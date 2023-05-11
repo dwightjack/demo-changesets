@@ -4,8 +4,10 @@ importers:
 
   .:
     specifiers:
+      '@changesets/changelog-git': ^0.1.14
       '@changesets/cli': ^2.26.1
     devDependencies:
+      '@changesets/changelog-git': 0.1.14
       '@changesets/cli': 2.26.1
 
   packages/lib-a:
