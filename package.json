@@ -10,5 +10,8 @@
   "devDependencies": {
     "@changesets/changelog-git": "^0.1.14",
     "@changesets/cli": "^2.26.1"
+  },
+  "scripts": {
+    "ci:publish": "pnpm -r publish --registry=http://localhost:4873"
   }
 }
