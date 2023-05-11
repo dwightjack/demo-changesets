@@ -1,1 +1,1 @@
-export const text = 'This the lib b. update 1';
+export const text = 'This the lib b. update 2';
