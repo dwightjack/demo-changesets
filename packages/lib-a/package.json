@@ -1,0 +1,12 @@
+{
+  "name": "@dwj/lib-a",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@dwj/lib-b": "workspace:^1.0.0"
+  }
+}
