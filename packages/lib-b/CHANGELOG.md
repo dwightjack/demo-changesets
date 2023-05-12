@@ -1,5 +1,37 @@
 # @dwj/lib-b
 
+## 1.2.1
+
+### Patch Changes
+
+- er
+
+## 1.2.1-next.0
+
+### Patch Changes
+
+- er
+
+## 1.2.0
+
+### Minor Changes
+
+- f34dab6: pre-release
+
+### Patch Changes
+
+- ewr
+
+## 1.2.0-next.0
+
+### Minor Changes
+
+- f34dab6: pre-release
+
+### Patch Changes
+
+- ewr
+
 ## 1.1.0
 
 ### Minor Changes
