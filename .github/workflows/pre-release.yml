@@ -39,3 +39,4 @@ jobs:
           git config --global user.name "Marco"
           git add . 
           git commit -m "chore: pre-release changes" 
+          git push
