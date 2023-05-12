@@ -20,7 +20,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version-file: ".node-version"
-          cache: "pnpm"
 
       - name: Install Dependencies
         run: pnpm install
@@ -31,8 +30,12 @@ jobs:
             pnpm changeset pre enter $PRE_TAG
           fi
       - name: Run changeset
-        run: pnpm run changeset version
+        run: | 
+          pnpm changeset version
+          pnpm i --lockfile-only
       - name: Commit changes
         run: | 
+          git config --global user.email "marco.solazzi@gmail.com"
+          git config --global user.name "Marco"
           git add . 
           git commit -m "chore: pre-release changes" 
