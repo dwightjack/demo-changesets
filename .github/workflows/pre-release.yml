@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - verify/**
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install
+      - name: Check pre-release state
+        run: |
+          if [ ! -f ./.changeset/pre.json ]; then
+            PRE_TAG=$(echo "${GITHUB_REF_NAME}" | sed -e 's/^verify\/[0-9-]*\(.\{1,10\}\).*$/\1/')
+            pnpm changeset pre enter $PRE_TAG
+          fi
+      - name: Run changeset
+        run: pnpm run changeset version
+      - name: Commit changes
+        run: | 
+          git add . 
+          git commit -m "chore: pre-release changes" 
