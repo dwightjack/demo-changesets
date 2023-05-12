@@ -12,7 +12,7 @@ importers:
 
   packages/lib-a:
     specifiers:
-      '@dwj/lib-b': workspace:^1.2.1
+      '@dwj/lib-b': workspace:^1.2.2-aaa.0
     dependencies:
       '@dwj/lib-b': link:../lib-b
 

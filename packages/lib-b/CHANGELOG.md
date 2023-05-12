@@ -1,5 +1,11 @@
 # @dwj/lib-b
 
+## 1.2.2-aaa.0
+
+### Patch Changes
+
+- fd39d0a: ewr
+
 ## 1.2.1
 
 ### Patch Changes
