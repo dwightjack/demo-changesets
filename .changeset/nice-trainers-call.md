@@ -1,5 +1,5 @@
 ---
-"@dwj/lib-a": patch
+"@dwj/lib-b": patch
 ---
 
 werwerew
