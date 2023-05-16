@@ -7,6 +7,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@dwj/lib-b": "workspace:^1.2.1"
+    "@dwj/lib-b": "workspace:*"
   }
 }
