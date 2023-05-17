@@ -22,6 +22,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
+      
       - name: Release as snapshot
         run: |
           pnpm changesets version --snapshot
@@ -33,3 +34,16 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create or update the PR
+        id: prcheck
+        run: |
+          PRS=$(gh pr list \
+              --json headRefName \
+              --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
+          if ((PRS > 0)); then
+            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --base develop
+
+          else
+
+          fi
+  
