@@ -42,10 +42,13 @@ jobs:
               --json headRefName \
               --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
 
-          echo "Published the following packages:" >> msg_body
-          echo "```" >> msg_body
-          echo "$VERSIONS" >> msg_body
-          echo "```" >> msg_body
+          cat > msg_body <<EOL
+          Published the following packages:
+          ```
+          ${VERSIONS}
+          ```
+          EOL
+          
           if ((PRS > 0)); then
             gh pr comment ${{ github.ref_name }} --body-file msg_body
           else
