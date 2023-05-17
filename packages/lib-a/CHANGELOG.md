@@ -1,5 +1,12 @@
 # @dwj/lib-a
 
+## 0.0.0-20230517094728
+
+### Patch Changes
+
+- Updated dependencies [5ccd9d0]
+  - @dwj/lib-b@0.0.0-20230517094728
+
 ## 1.1.2
 
 ### Patch Changes
