@@ -1,4 +1,4 @@
-name: Release
+name: Pre-release
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       
       - name: Release as snapshot
         run: |
-          pnpm changesets version --snapshot
+          pnpm changeset version --snapshot
           pnpm install --lockfile-only
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
