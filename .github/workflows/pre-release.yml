@@ -27,23 +27,29 @@ jobs:
         run: |
           pnpm changeset version --snapshot
           pnpm install --lockfile-only
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "ci: create snapshot versions. [skip ci]" || exit 0
-          git push
+          # git config user.name "github-actions[bot]"
+          # git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # git add .
+          # git commit -m "ci: create snapshot versions. [skip ci]" || exit 0
+          # git push
+          pnpm -r ls --json --depth=-1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create or update the PR
-        id: prcheck
         run: |
+          VERSIONS=$(pnpm -r ls --json --depth=-1 | jq 'map(select(.version | contains ("0.0.0-"))) | .[] | (.name + "@" + .version)')
           PRS=$(gh pr list \
               --json headRefName \
               --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
+
+          echo "Published the following packages:" >> msg_body
+          echo "```" >> msg_body
+          echo "$VERSIONS" >> msg_body
+          echo "```" >> msg_body
           if ((PRS > 0)); then
-            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --base develop
-
+            gh pr comment ${{ github.ref_name }} --body-file msg_body
           else
-
+            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base develop
           fi
-  
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
