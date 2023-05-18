@@ -36,7 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create or update the PR
         run: |
-          VERSIONS=$(pnpm -r ls --json --depth=-1 | jq -r 'map(select(.version | contains ("0.0.0-"))) | .[] | (.name + "@" + .version)')
+          VERSIONS=$(pnpm -r ls --json --depth=-1 | jq -r '[map(select(.version | contains ("0.0.0-"))) | .[] | (.name + "@" + .version)] | join("\\n")')
           PRS=$(gh pr list \
               --json headRefName \
               --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
