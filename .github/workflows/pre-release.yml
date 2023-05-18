@@ -53,7 +53,7 @@ jobs:
 
           git fetch origin main --depth=1
 
-          COMMIT_DIFF_COUNT=$(git log main..${{ github.ref_name }}  --oneline | wc -l)
+          COMMIT_DIFF_COUNT=$(git log --oneline main..${{ github.ref_name }} --   | wc -l)
 
           echo "--------"
           cat msg_body
