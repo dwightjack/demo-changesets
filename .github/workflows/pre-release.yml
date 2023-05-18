@@ -49,10 +49,16 @@ jobs:
           echo "$VERSIONS" >> msg_body
           echo "\`\`\`" >> msg_body
 
+          COMMIT_DIFF_COUNT=$(git log main..  --oneline | wc -l)
+
+          echo "--------"
+          cat msg_body
+          echo "--------"
+
           
           if ((PRS > 0)); then
             gh pr comment ${{ github.ref_name }} --body-file msg_body
-          else
+          elif ((COMMIT_DIFF_COUNT > 0))
             echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
             gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
           fi
