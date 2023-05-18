@@ -49,6 +49,8 @@ jobs:
           echo "$VERSIONS" >> msg_body
           echo "\`\`\`" >> msg_body
 
+          git fetch origin main --depth=1
+
           COMMIT_DIFF_COUNT=$(git log main..${{ github.ref_name }}  --oneline | wc -l)
 
           echo "--------"
