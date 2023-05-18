@@ -1,0 +1,60 @@
+name: Pre-release
+
+on:
+  push:
+    branches:
+      - verify/**
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      
+      - name: Release as snapshot
+        run: |
+          pnpm changeset version --snapshot
+          pnpm install --lockfile-only
+          ## Do we need to commit these changes?
+          # git config user.name "github-actions[bot]"
+          # git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # git add .
+          # git commit -m "ci: create snapshot versions. [skip ci]" || exit 0
+          # git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create or update the PR
+        run: |
+          # Store versions of snapshot files
+          VERSIONS=$(pnpm -r ls --json --depth=-1 | jq -r 'map(select(.version | contains ("0.0.0-"))) | .[] | (.name + "@" + .version)')
+          # Check if we already have a PR for this branch
+          PRS=$(gh pr list \
+              --json headRefName \
+              --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
+          
+          echo "Changesets published the following snapshots:" >> msg_body
+          echo "\`\`\`" >> msg_body
+          echo "$VERSIONS" >> msg_body
+          echo "\`\`\`" >> msg_body
+
+          
+          if ((PRS > 0)); then
+            gh pr comment ${{ github.ref_name }} --body-file msg_body
+          else
+            echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
+            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
