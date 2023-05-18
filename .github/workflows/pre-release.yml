@@ -36,17 +36,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create or update the PR
         run: |
-          VERSIONS=$(pnpm -r ls --json --depth=-1 | jq -r '[map(select(.version | contains ("0.0.0-"))) | .[] | (.name + "@" + .version)] | join("\\n")')
+          VERSIONS=$(pnpm -r ls --json --depth=-1 | jq -r 'map(select(.version | contains ("0.0.0-"))) | .[] | (.name + "@" + .version)')
           PRS=$(gh pr list \
               --json headRefName \
               --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
           
-          cat > msg_body << EOF
-          Published the following packages:
-          ```
-          $VERSIONS
-          ```
-          EOF
+          echo "Published the following packages:" >> msg_body
+          echo "\`\`\`" >> msg_body
+          echo "$VERSIONS" >> msg_body
+          echo "\`\`\`" >> msg_body
+          echo "EOF" >> msg_body
 
           
           if ((PRS > 0)); then
