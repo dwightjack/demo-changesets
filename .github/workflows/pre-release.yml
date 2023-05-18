@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  
       - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v3
         with:
@@ -51,8 +51,8 @@ jobs:
           echo "$VERSIONS" >> msg_body
           echo "\`\`\`" >> msg_body
 
-          git fetch origin main --depth=1
-
+          git fetch origin main
+          git branch -a
           COMMIT_DIFF_COUNT=$(git log --oneline main..${{ github.ref_name }} --   | wc -l)
 
           echo "--------"
@@ -62,7 +62,7 @@ jobs:
           
           if ((PRS > 0)); then
             gh pr comment ${{ github.ref_name }} --body-file msg_body
-          elif ((COMMIT_DIFF_COUNT > 0))
+          elif ((COMMIT_DIFF_COUNT > 0)); then
             echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
             gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
           fi
