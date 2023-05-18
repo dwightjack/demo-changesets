@@ -25,7 +25,8 @@ jobs:
       - name: Create Release Pull Request
         uses: changesets/action@v1
         with:
-          version: pnpm changeset version
+          version: pnpm run ci:version # pnpm changeset version && pnpm install --lockfile-only
+          # publish: pnpm -r publish
           commit: "chore: update versions"
           title: "Release: new versions"
           createGithubReleases: false

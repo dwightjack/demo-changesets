@@ -1,5 +1,11 @@
 # @dwj/lib-b
 
+## 0.0.0-20230517094728
+
+### Patch Changes
+
+- 5ccd9d0: werwerew
+
 ## 1.2.1
 
 ### Patch Changes
