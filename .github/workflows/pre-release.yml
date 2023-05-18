@@ -32,7 +32,6 @@ jobs:
           # git add .
           # git commit -m "ci: create snapshot versions. [skip ci]" || exit 0
           # git push
-          pnpm -r ls --json --depth=-1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create or update the PR
@@ -46,7 +45,7 @@ jobs:
 
           # echo "Published the following packages:" >> msg_body
           # echo "```" >> msg_body
-          # echo "$VERSIONS" >> msg_body
+          # echo $VERSIONS >> msg_body
           # echo "```" >> msg_body
           # if ((PRS > 0)); then
           #   gh pr comment ${{ github.ref_name }} --body-file msg_body
