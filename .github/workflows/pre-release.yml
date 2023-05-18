@@ -51,7 +51,7 @@ jobs:
           if ((PRS > 0)); then
             gh pr comment ${{ github.ref_name }} --body-file msg_body
           else
-            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base develop
+            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
