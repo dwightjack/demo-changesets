@@ -41,16 +41,17 @@ jobs:
           PRS=$(gh pr list \
               --json headRefName \
               --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
-              
+          
+          echo $VERSIONS
 
-          echo "Published the following packages:" >> msg_body
-          echo "```" >> msg_body
-          echo "$VERSIONS" >> msg_body
-          echo "```" >> msg_body
-          if ((PRS > 0)); then
-            gh pr comment ${{ github.ref_name }} --body-file msg_body
-          else
-            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base develop
-          fi
+          # echo "Published the following packages:" >> msg_body
+          # echo "```" >> msg_body
+          # echo "$VERSIONS" >> msg_body
+          # echo "```" >> msg_body
+          # if ((PRS > 0)); then
+          #   gh pr comment ${{ github.ref_name }} --body-file msg_body
+          # else
+          #   gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base develop
+          # fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
