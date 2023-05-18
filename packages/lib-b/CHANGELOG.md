@@ -1,5 +1,11 @@
 # @dwj/lib-b
 
+## 1.0.1
+
+### Patch Changes
+
+- c8538ce: hello!
+
 ## 0.0.0-20230517094728
 
 ### Patch Changes
