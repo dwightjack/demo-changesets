@@ -42,13 +42,14 @@ jobs:
         run: |
           PRS=$(gh pr list \
           --json headRefName \
-          --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length');
+          --jq 'map(select(.headRefName == "$BRANCH_NAME")) | length');
           
           if ((PRS == 0)); then
             echo "CREATE_PR=yes" >> "$GITHUB_ENV"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
       - name: Create or update the snapshot release PR
         run: |
           VERSIONS=$(pnpm -r ls --json --depth=-1 | jq -r 'map(select(.version | contains ("0.0.0-"))) | .[] | (.name + "@" + .version)')
@@ -66,14 +67,15 @@ jobs:
             echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
             gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
           else
-            gh pr comment ${{ github.ref_name }} --body-file msg_body
+            gh pr comment $BRANCH_NAME --body-file msg_body
           fi
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
       - name: Unlabel PR
         if: github.event.action == 'labeled'
         run: |
-          gh pr edit ${{ github.ref_name }} --remove-label='release: snapshot'
+          gh pr edit ${{ github.head_ref }} --remove-label='release: snapshot'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
