@@ -1,0 +1,82 @@
+name: Snapshot Release
+
+on:
+  pull_request:
+    types: [ labeled ]
+  push:
+    branches:
+      - verify/**
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    if: |
+      (github.event.action == 'labeled' && github.event.label.name == 'release: snapshot') || (github.event_name == 'push')
+    name: Snapshot Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: ".node-version"
+          cache: "pnpm"
+
+      - name: Install Dependencies
+        run: pnpm install
+      
+      - name: Release as snapshot
+        run: |
+          pnpm changeset version --snapshot
+          pnpm install --lockfile-only
+          ## Do we need to commit these changes?
+          # git config user.name "github-actions[bot]"
+          # git config user.email "github-actions[bot]@users.noreply.github.com"
+          # git add .
+          # git commit -m "ci: create snapshot versions. [skip ci]" || exit 0
+          # git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check for existing PRs on push
+        if: github.event_name == 'push'
+        run: |
+          PRS=$(gh pr list \
+          --json headRefName \
+          --jq 'map(select(.headRefName == "$BRANCH_NAME")) | length');
+          
+          echo "$PRS"
+          if [ ! $PRS -eq 0 ]; then
+            echo "CREATE_PR=yes" >> "$GITHUB_ENV"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+      - name: Create or update the snapshot release PR
+        run: |
+          VERSIONS=$(pnpm -r ls --json --depth=-1 | jq -r 'map(select(.version | contains ("0.0.0-"))) | .[] | (.name + "@" + .version)')
+        
+          echo "Changesets published the following snapshots:" >> msg_body
+          echo "\`\`\`" >> msg_body
+          echo "$VERSIONS" >> msg_body
+          echo "\`\`\`" >> msg_body
+
+          echo "--------"
+          cat msg_body
+          echo "--------"
+
+          if [ "${{ env.CREATE_PR }}" == "yes" ]; then
+            echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
+            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
+          else
+            gh pr comment $BRANCH_NAME --body-file msg_body
+          fi
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+      - name: Unlabel PR
+        if: github.event.action == 'labeled'
+        run: |
+          gh pr edit ${{ github.head_ref }} --remove-label='release: snapshot'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
