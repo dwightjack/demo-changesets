@@ -11,7 +11,7 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   release:
     if: |
-      (github.event.action == 'labeled' && github.event.label.name == 'release: snapshot') || (github.event.action == 'push')
+      (github.event.action == 'labeled' && github.event.label.name == 'release: snapshot') || (github.event_name == 'push')
     name: Snapshot Release
     runs-on: ubuntu-latest
     steps:
@@ -38,7 +38,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Check for existing PRs on push
-        if: github.event.action == 'push'
+        if: github.event_name == 'push'
         run: |
           PRS=$(gh pr list \
           --json headRefName \
