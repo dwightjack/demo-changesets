@@ -44,7 +44,7 @@ jobs:
           --json headRefName \
           --jq 'map(select(.headRefName == "$BRANCH_NAME")) | length');
           
-          if ((PRS == 0)); then
+          if [ $PRS -eq 0 ]; then
             echo "CREATE_PR=yes" >> "$GITHUB_ENV"
           fi
         env:
