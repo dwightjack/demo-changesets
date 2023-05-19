@@ -29,6 +29,9 @@ jobs:
         run: |
           pnpm changeset version --snapshot
           pnpm install --lockfile-only
+          
+          # here we should call pnpm -r publish --tag=beta
+
           ## Do we need to commit these changes?
           # git config user.name "github-actions[bot]"
           # git config user.email "github-actions[bot]@users.noreply.github.com"
