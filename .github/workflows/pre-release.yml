@@ -49,6 +49,9 @@ jobs:
           echo "$VERSIONS" >> msg_body
           echo "\`\`\`" >> msg_body
 
+          echo "--------"
+          cat msg_body
+          echo "--------"
           
           if ((PRS > 0)); then
             gh pr comment ${{ github.ref_name }} --body-file msg_body
