@@ -42,7 +42,8 @@ jobs:
         run: |
           PRS=$(gh pr list \
           --json headRefName \
-          --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
+          --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length');
+          
           if ((PRS == 0)); then
             echo "CREATE_PR=yes" >> "$GITHUB_ENV"
           else
