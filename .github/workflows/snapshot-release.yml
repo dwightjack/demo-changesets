@@ -45,7 +45,8 @@ jobs:
           --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length')
           if ((PRS == 0)); then
             echo "CREATE_PR=yes" >> "$GITHUB_ENV"
-          fi
+          else
+           echo "CREATE_PR=no" >> "$GITHUB_ENV"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
       - name: Create or update the snapshot release PR
@@ -61,17 +62,17 @@ jobs:
           cat msg_body
           echo "--------"
 
-          # if [[ "${{ env.CREATE_PR }}" == "yes" ]]; then
-          #   echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
-          #   gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
-          # else
-          #   gh pr comment ${{ github.ref_name }} --body-file msg_body
+          if [ "${{ env.CREATE_PR }}" == "yes" ]; then
+            echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
+            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
+          else
+            gh pr comment ${{ github.ref_name }} --body-file msg_body
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-      # - name: Unlabel PR
-      #   if: github.event.action == 'labeled'
-      #   run: |
-      #     gh pr edit ${{ github.ref_name }} --remove-label='release: snapshot'
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+      - name: Unlabel PR
+        if: github.event.action == 'labeled'
+        run: |
+          gh pr edit ${{ github.ref_name }} --remove-label='release: snapshot'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
