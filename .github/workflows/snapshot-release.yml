@@ -43,11 +43,10 @@ jobs:
           PRS=$(gh pr list \
           --json headRefName \
           --jq 'map(select(.headRefName == "${{ github.ref_name }}")) | length');
-
+          
           if ((PRS == 0)); then
             echo "CREATE_PR=yes" >> "$GITHUB_ENV"
-          else
-           echo "CREATE_PR=no" >> "$GITHUB_ENV"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
       - name: Create or update the snapshot release PR
@@ -63,11 +62,12 @@ jobs:
           cat msg_body
           echo "--------"
 
-          # if [ "${{ env.CREATE_PR }}" == "yes" ]; then
-          #   echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
-          #   gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
-          # else
-          #   gh pr comment ${{ github.ref_name }} --body-file msg_body
+          if [ "${{ env.CREATE_PR }}" == "yes" ]; then
+            echo "Push new commits to this branch to trigger a new snapshot release." >> msg_body
+            gh pr create --title "[DO NOT MERGE]: Snapshot Release" --body-file msg_body --base main
+          else
+            gh pr comment ${{ github.ref_name }} --body-file msg_body
+          fi
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
