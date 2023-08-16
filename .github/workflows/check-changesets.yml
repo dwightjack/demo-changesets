@@ -1,0 +1,49 @@
+name: Check Changesets
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  check:
+    if: startsWith(github.head_ref, 'whitesource-remediate/') != true && startsWith(github.head_ref, 'changeset-release') != true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        id: changesets 
+      - run: |
+          FILES=$(gh pr diff --name-only $GITHUB_HEAD_REF)
+          MATCH_PATTERN="^\.changeset\/.+\.md"
+          matches=()
+          while IFS= read -r FILE; do
+            if [[ $FILE =~  $MATCH_PATTERN ]]; then
+              matches+=("- \`$FILE\`")
+            fi;
+          done <<< "$FILES"
+
+          if [ "${#matches[@]}" -eq 0 ]; then
+            COMMENT_BODY=$(cat .github/templates/changesets-missing.md)
+          else
+            COMMENT_BODY=$(cat .github/templates/changesets-found.md)
+            MATCHES_LIST=$(IFS=$'\n'; echo "${matches[*]}")
+            COMMENT_BODY=${COMMENT_BODY/"|CHANGES|"/"$MATCHES_LIST"}
+          fi
+          echo "$COMMENT_BODY" >> pr_comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: check-changesets-action
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: pr_comment
+          edit-mode: replace
