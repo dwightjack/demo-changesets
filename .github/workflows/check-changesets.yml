@@ -37,8 +37,8 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const createorUpdateComment = require('./.github/workflows/create-update-comment.js')
-            await createorUpdateComment()
+            const createorUpdateComment = require('./.github/workflows/create-update-comment.js');
+            await createorUpdateComment({ github, context });
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
       # - name: Find Comment

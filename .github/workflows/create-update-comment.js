@@ -1,8 +1,7 @@
 const fs = require("fs");
 
-module.exports = async function createorUpdateComment() {
-  const owner = "dwightjack";
-  const repo = "demo-changesets";
+module.exports = async function createorUpdateComment({ github, context }) {
+  const { owner, repo } = context.repo;
   const comment_body = fs.readFileSync("./pr_comment", "utf-8");
   const comments = await github.paginate(github.rest.issues.listComments, {
     owner,
