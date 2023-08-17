@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        id: changesets 
+        id: changesets
       - run: |
           FILES=$(gh pr diff --name-only $GITHUB_HEAD_REF)
           MATCH_PATTERN="^\.changeset\/.+\.md"
@@ -37,31 +37,9 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const fs = require('fs');
-            const owner = 'dwightjack';
-            const repo = 'demo-changesets';
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner,
-              repo,
-              issue_number: `${process.env.PR_NUMBER}`,
-            });
-            const match = comments.find(({ user, body }) => user.login === 'github-actions[bot]' && body.includes('check-changesets-action'))
-            if (match && match.id) {
-              github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: match.id.toString(),
-                body : fs.readFileSync('./pr_comment', 'utf-8'),
-              });
-            } else {
-              github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: `${process.env.PR_NUMBER}`,
-                body : fs.readFileSync('./pr_comment', 'utf-8'),
-              });
-            }
-        env: 
+            const createorUpdateComment = require('./.github/workflows/create-update-comment.js')
+            await createorUpdateComment()
+        env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
       # - name: Find Comment
       #   uses: peter-evans/find-comment@v2
