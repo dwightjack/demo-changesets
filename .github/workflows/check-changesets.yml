@@ -40,7 +40,7 @@ jobs:
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner: 'dwightjack',
               repo: 'demo-changesets',
-              issue_number: "$PR_NUMBER",
+              issue_number: `${process.env.PR_NUMBER}`,
             });
             console.log(comments)
         env: 
