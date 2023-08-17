@@ -47,14 +47,14 @@ jobs:
             });
             const match = comments.find(({ user, body }) => user.login === 'github-actions[bot]' && body.includes('check-changesets-action'))
             if (match && match.id) {
-              octokit.rest.issues.updateComment({
+              github.rest.issues.updateComment({
                 owner,
                 repo,
                 comment_id: match.id.toString(),
                 body : fs.readFileSync('./pr_comment', 'utf-8'),
               });
             } else {
-              octokit.rest.issues.createComment({
+              github.rest.issues.createComment({
                 owner,
                 repo,
                 issue_number: `${process.env.PR_NUMBER}`,
