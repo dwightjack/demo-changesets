@@ -4,4 +4,4 @@
 
 |CHANGES|
 
-*posted by: check-changesets-action*
+<!-- check-changesets-action -->

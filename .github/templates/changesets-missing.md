@@ -10,4 +10,4 @@ pnpm changeset add
 
 Then commit and push the new files.
 
-*posted by: check-changesets-action*
+<!-- check-changesets-action -->
