@@ -1,5 +1,12 @@
 # @dwj/lib-b
 
+## 1.0.2
+
+### Patch Changes
+
+- 1cac827: er
+- dcaec63: Demo change
+
 ## 1.0.1
 
 ### Patch Changes
