@@ -42,8 +42,7 @@ jobs:
               repo,
               issue_number,
             });
-            const match = comments.find(({ user, body }) => user.login === 'github-actions[bot]' && body.includes('check-changesets-action'))
-            console.log(comments, match.id.toString())
+            console.log(comments)
         env: 
           PR_NUMBER: ${{ github.event.pull_request.number }}
       # - name: Find Comment
